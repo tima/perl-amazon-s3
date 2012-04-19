@@ -370,7 +370,8 @@ sub _croak_if_response_error {
 }
 
 sub _xpc_of_content {
-    return XMLin($_[1], 'SuppressEmpty' => '', 'ForceArray' => ['Contents']);
+    my $self = shift;
+    return XMLin(shift, 'SuppressEmpty' => '', 'ForceArray' => ['Contents'], @_);
 }
 
 # returns 1 if errors were found
@@ -384,8 +385,8 @@ sub _remember_errors {
         return 1;
     }
 
-    my $r = ref $src ? $src : $self->_xpc_of_content($src);
-
+    my $r = ref $src ? $src : $self->_xpc_of_content($src, KeepRoot => 1);
+    
     if ($r->{Error}) {
         $self->err($r->{Error}{Code});
         $self->errstr($r->{Error}{Message});
